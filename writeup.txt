@@ -1,0 +1,38 @@
+Members:
+Deepak Srivatsav, 2016030
+Anubhav Chaudhary, 2016013
+
+Instructions:
+run setup.sh after giving it appropriate permissions. This will create the character devices encdev and decdev. This will also run the makefile. The makefile will create executables for the test programs as well. This will then insert the modules as well.
+
+Logic:
+We have implemented read(), write(), open() and close() functions in these character devices, however for open and close have used the kernel callback function to do so.
+The encryption device copy 16 bytes at a time from the user and encrypts it using block ciphers. The key is generated randomly using /dev/urandom and is passed from user space automatically. The encryption device passes the encrypted text back to user space. In user space, this encrypted value is written to a file along with the key.
+Similarly for decryption, the decryption user space program reads the key and the encrypted text from the file and sends this to the decryption device in blocks of 16 bytes. The decrypted text is then sent back from the decryption device and is then printed on the screen. Regular updates are also printed to the kernel log.
+
+Compilation: 
+make all
+
+Input: 
+The only input that must be given by the user is the message. However the message length cannot exceed 200 :(. Also, as 0 is used for padding, 0 cannot be part of the message.
+
+Output:
+The user will see the following output for the encryption user space program:
+key, padded message, encrypted message.
+The kernel log will have:
+device registration, successful/failed encryption, successful/failed reading from user space
+
+The user will see the following output for the decryption user space program:
+key, encrypted message, decrypted message.
+The kernel log contains:
+device registration, successful/failed decryption, successful/failed reading from user space.
+
+note: dmesg for viewing kernel logs
+
+Error handling:
+1) User input: cannot enter a message with more than 200 characters. The message will be cut to 199 characters.
+2) Device registration
+3) Copying from user space
+4) Copying to user space
+5) Size of random number generated
+6) Reading/Writing from files
